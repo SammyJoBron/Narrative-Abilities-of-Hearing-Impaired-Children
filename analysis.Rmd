@@ -1,0 +1,602 @@
+---
+title: "Narrative Abilities of Hearing-Impaired Children"
+output:
+  html_document: default
+  pdf_document: default
+date: "2023-06-21"
+---
+
+
+# Installing the required libraries
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The `psych` package is used to to gather statistics about the initial data with the `describe` function.
+The `corrplot` package is used to create diagrams of correlation matrices.
+
+```{r, result='hide', message=FALSE}
+if(!require(psych)) install.packages("psych")
+if(!require(corrplot)) install.packages("corrplot")
+library(psych)
+library(corrplot)
+```
+
+# Loading and preparing the data
+The data file is imported and some initial transformations are applied to combine several `BRIEF` columns into one.
+The data is then split up into the data for HI-children and the data for TD-children to use in separate analyses.
+
+```{r}
+data <- read.csv("./data.csv", stringsAsFactors=TRUE)
+
+# Combine BRIEF_young_B and BRIEF_old_B to create a BRIEF_B column
+data$BRIEF_B <- data$BRIEF_young_B
+data$BRIEF_B[!is.na(data$BRIEF_old_B)] <- data$BRIEF_old_B[!is.na(data$BRIEF_old_B)]
+
+# Combine BRIEF_young_C and BRIEF_old_C to create a BRIEF_C column
+data$BRIEF_C <- data$BRIEF_young_C
+data$BRIEF_C[!is.na(data$BRIEF_old_C)] <- data$BRIEF_old_C[!is.na(data$BRIEF_old_C)]
+
+# Split the data between HI and TD:
+data_HI <- data[data$HI == 1,]
+data_TD <- data[data$HI != 1,]
+```
+
+## Descriptive statistics for the original data
+
+The descriptive statistics of the whole dataset and the dataset splitted between HI- and TD-children are computed.
+
+```{r, warning=FALSE}
+descriprive_columns <- c("min", "max", "mean", "sd")
+
+numeric_variables <- c(
+  "age",
+  "storylength_bus", 
+  "MLU_bus",
+  "mazes_bus", 
+  "ungrammatical_bus", 
+  "complex_bus", 
+  "implicit_referents_bus",
+  "plot_bus",
+  "storylength_frog", 
+  "MLU_frog", 
+  "mazes_frog", 
+  "ungrammatical_frog", 
+  "complex_frog", 
+  "implicit_referents_frog",
+  "plot_frog",
+  "BRIEF_B",
+  "BRIEF_C",
+  "NWRS",
+  "hearing_loss_L", 
+  "hearing_loss_R", 
+  "speech_understanding_L", 
+  "speech_understanding_R", 
+  "speech_understanding_total",
+  "age_rehabilitation"
+)
+
+binary_variables <- c("HI", "gender", "born", "perceptive")
+describe(data)[numeric_variables, descriprive_columns]
+
+numeric_variables_HI <- c(
+  "age",
+  "storylength_bus", 
+  "MLU_bus", 
+  "mazes_bus", 
+  "ungrammatical_bus", 
+  "complex_bus", 
+  "implicit_referents_bus",
+  "plot_bus",
+  "storylength_frog", 
+  "MLU_frog", 
+  "mazes_frog", 
+  "ungrammatical_frog", 
+  "complex_frog", 
+  "implicit_referents_frog",
+  "plot_frog",
+  "BRIEF_B",
+  "BRIEF_C",
+  "NWRS",
+  "hearing_loss_L", 
+  "hearing_loss_R", 
+  "speech_understanding_L", 
+  "speech_understanding_R", 
+  "speech_understanding_total",
+  "age_rehabilitation"
+)
+describe(data_HI)[numeric_variables_HI, descriprive_columns]
+
+numeric_variables_TD <- c(
+  "age",
+  "storylength_bus", 
+  "MLU_bus", 
+  "mazes_bus", 
+  "ungrammatical_bus", 
+  "complex_bus", 
+  "implicit_referents_bus",
+  "plot_bus", 
+  "storylength_frog", 
+  "MLU_frog",
+  "mazes_frog", 
+  "ungrammatical_frog", 
+  "complex_frog", 
+  "implicit_referents_frog",
+  "plot_frog",
+  "BRIEF_B",
+  "BRIEF_C",
+  "NWRS"
+)
+describe(data_TD)[numeric_variables_TD, descriprive_columns]
+```
+
+## Contrasts for the data
+
+Set contrasts and check that they were set correctly.
+
+```{r}
+# Binary variable `HI`
+data$HI <- as.factor(data$HI)
+contrast <- cbind (c(0.5, -0.5))   # HI = -0.5, TD = +0.5
+colnames (contrast) <- c("-HI+TD")
+contrasts (data$HI) <- contrast
+contrasts (data$HI)
+
+# Binary variable `gender`
+data$gender <- as.factor(data$gender)
+contrast <- cbind (c(-0.5, +0.5))   # f = -0.5, m = +0.5
+colnames (contrast) <- c("-f+m")
+contrasts (data$gender) <- contrast
+contrasts (data$gender)
+
+# Binary variable `born`
+data$born <- as.factor(data$born)
+contrast <- cbind (c(+0.5, -0.5))   # born = -0.5, not_born = +0.5
+colnames (contrast) <- c("-born+not_born")
+contrasts (data$born) <- contrast
+contrasts (data$born)
+
+# Variable perceptive can take three values
+data$perceptive <- as.factor(data$perceptive)
+contrasts <- cbind (c(-1/3, +2/3, -1/3), c(-0.5, 0, +0.5))   # alphabetical order: conductive, conductive_perceptive, perceptive
+colnames (contrasts) <- c("-conductiveperceptive+conductive_perceptive", "-conductive+perceptive")
+contrasts (data$perceptive) <- contrasts
+contrasts(data$perceptive)
+```
+
+
+
+## Transforming the data to prepare for the models
+
+A helper function is added that transforms the variables with a `sqrt`, `log` or cube root,
+whenever one of these operations results in a lower skewness for that variable.
+The operation with the lowest skewness is used,
+and the variable is left unchanged when the operations do not lower the skewness.
+
+```{r}
+transform_column <- function(data, column_name) {
+  column <- data[,column_name]
+  minimum <- min(column[!is.na(column)])
+  
+  # log only works for values at least 1, but the skew is independent of this transformation.
+  if (minimum <= 1) {
+    column <- column - minimum + 1
+  }
+  
+  all_skews_per_transformation <- c(
+    "current" = abs(describe(column)[["skew"]]),
+    "log" = abs(describe(log(column))[["skew"]]),
+    "sqrt" = abs(describe(sqrt(column))[["skew"]]),
+    "cube" = abs(describe(column^(1/3))[["skew"]])
+  )
+  
+  transformations <- c(
+    "current" = identity,  # Don't change the data when the skew is already minimized
+    "log" = log,
+    "sqrt" = sqrt,
+    "cube" =  function(data) data^(1/3)
+  )
+  
+  text_current = paste("For ", column_name, "the skew was", all_skews_per_transformation[["current"]])
+  text_new = paste(names(which.min(all_skews_per_transformation)), min(all_skews_per_transformation))
+  print(paste(text_current, "and with", text_new))
+
+  transformation_minimising_skew <- transformations[[which.min(all_skews_per_transformation)]]
+  
+  return(transformation_minimising_skew(column))
+}
+
+for (numeric_variable in numeric_variables) {
+  new_column <- transform_column(data, numeric_variable)
+  data[numeric_variable] <- new_column
+}
+```
+
+After these transformations, the data is can be scaled to set the mean to zero.
+
+```{r}
+data[numeric_variables] <- scale(data[numeric_variables], scale=FALSE)
+```
+
+
+## Plotting the correlation matrices
+
+A helper function is used to plot the correlation matrices in a directory.
+
+```{r}
+new_colname <- function(column_name) {
+  title <- column_name
+
+  names_plot <- read.csv(file="./descriptive_colnames.csv")
+  title <- names_plot[names_plot["old"] == column_name]
+
+  if (length(title > 0 )) {  # Update the title if a rename exists
+    title <- title[[2]]
+  }
+
+  return(title)
+}
+
+make_corrplot <- function(all_data, file_name, path_name="corrplots", cex=0.7, ncex=0.7) {
+  dir.create(path_name, showWarnings = FALSE)
+  file_path <- paste("./", path_name,"/", file_name, ".png", sep="")
+  
+  colnames(all_data) <- unlist(lapply(colnames(all_data), new_colname))
+
+  png(height=1800, width=1800, file=file_path)
+  corr_matrix <- corr.test(all_data)
+  fctr <- 4
+  
+  corrplot(
+      corr_matrix$r, title=paste("The Correlation Matrix For", file_name), p.mat = t(corr_matrix$p), insig="blank",
+      cex.main=fctr,
+      bg="gray92",
+      tl.cex=fctr*cex,
+      cl.cex=fctr*0.8,
+      type="upper",
+      diag = FALSE,
+      method="color",
+      addgrid.col = "darkgray",
+      number.cex = fctr*ncex,
+      mar = c(fctr*2, fctr*2, fctr*3, fctr*2), # margins
+      tl.col="black",
+      tl.offset=fctr*0.4
+    )$corrPos -> corr_positions
+  text(corr_positions$x, corr_positions$y, round(corr_positions$corr, 2), cex=fctr*ncex)
+  
+  # Surpress the output of the dev.of
+  sink("tmp.log")
+  dev.off()
+  sink()
+  file_removed <- file.remove("tmp.log")
+}
+
+numeric_variables_both = c(
+  "age",
+  "BRIEF_B",
+  "BRIEF_C",
+  "NWRS",
+  "hearing_loss_L", 
+  "hearing_loss_R",
+  "speech_understanding_L", 
+  "speech_understanding_R", 
+  "speech_understanding_total",
+  "age_rehabilitation"
+)
+
+numeric_variables_for_cor_bus <- c(
+  "storylength_bus", 
+  "MLU_bus", 
+  "mazes_bus", 
+  "ungrammatical_bus", 
+  "complex_bus", 
+  "implicit_referents_bus",
+  "plot_bus",
+  
+  numeric_variables_both
+)
+
+numeric_variables_for_cor_frog <- c(
+  "storylength_frog", 
+  "MLU_frog", 
+  "mazes_frog", 
+  "ungrammatical_frog", 
+  "complex_frog", 
+  "implicit_referents_frog",
+  "plot_frog",
+  
+  numeric_variables_both
+)
+
+make_corrplot(data[,numeric_variables_for_cor_bus], "correlation_matrix_bus", cex=0.6, ncex=0.4)
+make_corrplot(data[,numeric_variables_for_cor_frog], "correlation_matrix_frog", cex=0.6, ncex=0.4)
+```
+
+The p-values for the correlations are shown as well.
+
+```{r}
+corr.test(data[c("MLU_bus",  "complex_bus", "ungrammatical_bus")])$p
+corr.test(data[c("implicit_referents_bus", "storylength_bus")])$p
+corr.test(data[c("MLU_frog",  "complex_frog", "ungrammatical_frog")])$p
+corr.test(data[c("implicit_referents_frog", "storylength_frog")])$p
+```
+
+# The effect of HI on narrative abilities
+
+In this section the models are fitted and the results are shown.
+The subsections each contain several models for the various dependent variables.
+The several dependent and independent variables are listed at the start of each section for completeness.
+
+## The Frog Story
+Dependent variables (microstructures):
+
+- Morphosyntax: `MLU_frog`, `ungrammatical_frog`, `complex_frog`
+- Semantic pragmatics: `implicit_referents_frog`, `storylength_frog`
+- Communicative language: `mazes_frog` 
+
+Dependent variable (macrostructures): `plot_frog`
+
+Independent variable: `HI`
+
+```{r}
+dependent_variables_frog_micro_morphosyntax <- c("MLU_frog", "complex_frog", "ungrammatical_frog")
+dependent_variables_frog_micro_semanticpragmatics <- c("storylength_frog", "implicit_referents_frog")
+dependent_variables_frog_micro_communicativelanguage <- c("mazes_frog")
+dependent_variables_frog_macro <- c("plot_frog")
+
+independent_variable <- c("HI")
+
+model_MLU_frog <- lm(MLU_frog ~., data = data[,c("MLU_frog", independent_variable)])
+summary(model_MLU_frog)
+confint(model_MLU_frog, level = 0.95)
+
+model_complex_frog <- lm(complex_frog ~., data = data[,c("complex_frog", independent_variable)])
+summary(model_complex_frog)
+confint(model_complex_frog, level = 0.95)
+
+model_ungrammatical_frog <- lm(ungrammatical_frog ~., data = data[,c("ungrammatical_frog", independent_variable)])
+summary(model_ungrammatical_frog)
+confint(model_ungrammatical_frog, level = 0.95)
+
+model_storylength_frog <- lm(storylength_frog ~., data = data[,c("storylength_frog", independent_variable)])
+summary(model_storylength_frog)
+confint(model_storylength_frog, level = 0.95)
+
+model_implicit_referents_frog <- lm(implicit_referents_frog ~., data = data[,c("implicit_referents_frog", independent_variable)])
+summary(model_implicit_referents_frog)
+confint(model_implicit_referents_frog, level = 0.95)
+
+model_mazes_frog <- lm(mazes_frog ~., data = data[,c("mazes_frog", independent_variable)])
+summary(model_mazes_frog)
+confint(model_mazes_frog, level = 0.95)
+
+model_plot_frog <- lm(plot_frog ~., data = data[,c("plot_frog", independent_variable)])
+summary(model_plot_frog)
+confint(model_plot_frog, level = 0.95)
+```
+
+
+## The Bus Story
+Dependent variables (microstructures):
+
+- Morphosyntax: `MLU_bus`, `ungrammatical_bus`, `complex_bus`
+- Semantic pragmatics: `implicit_referents_bus`, `storylength_bus`
+- Communicative language: `mazes_bus` 
+
+Dependent variable (macrostructures): `plot_bus`
+
+Independent variable: `HI`
+
+```{r}
+dependent_variables_bus_micro_morphosyntax <- c("MLU_bus", "complex_bus", "ungrammatical_bus")
+dependent_variables_bus_micro_semanticpragmatics <- c("storylength_bus","implicit_referents_bus")
+dependent_variables_bus_micro_communicativelanguage <- c("mazes_bus")
+dependent_variables_bus_macro <- c("plot_bus")
+
+model_MLU_bus <- lm(MLU_bus ~., data = data[,c("MLU_bus", independent_variable)])
+summary(model_MLU_bus)
+confint(model_MLU_bus, level = 0.95)
+
+model_complex_bus <- lm(complex_bus ~., data = data[,c("complex_bus", independent_variable)])
+summary(model_complex_bus)
+confint(model_complex_bus, level = 0.95)
+
+model_ungrammatical_bus <- lm(ungrammatical_bus ~., data = data[,c("ungrammatical_bus", independent_variable)])
+summary(model_ungrammatical_bus)
+confint(model_ungrammatical_bus, level = 0.95)
+
+model_storylength_bus <- lm(storylength_bus ~., data = data[,c("storylength_bus", independent_variable)])
+summary(model_storylength_bus)
+confint(model_storylength_bus, level = 0.95)
+
+model_implicit_referents_bus <- lm(implicit_referents_bus ~., data = data[,c("implicit_referents_bus", independent_variable)])
+summary(model_implicit_referents_bus)
+confint(model_implicit_referents_bus, level = 0.95)
+
+model_mazes_bus <- lm(mazes_bus ~., data = data[,c("mazes_bus", independent_variable)])
+summary(model_mazes_bus)
+confint(model_mazes_bus, level = 0.95)
+
+model_plot_bus <- lm(plot_bus ~., data = data[,c("plot_bus", independent_variable)])
+summary(model_plot_bus)
+confint(model_plot_bus, level = 0.95)
+```
+
+# Correlations between phonological processing, executive functions and narrative abilities
+
+Here, the correlations of several variables regarding phonological processing,
+executive functions and narrative abilities are computed.
+
+## The effect of HI on the BRIEF and the NWR-S
+
+```{r}
+model_BRIEF_B <- lm(BRIEF_B ~., data = data[,c("BRIEF_B", "HI")])
+summary(model_BRIEF_B)
+confint(model_BRIEF_B, level = 0.95)
+
+model_BRIEF_C <- lm(BRIEF_C ~., data = data[,c("BRIEF_C", "HI")])
+summary(model_BRIEF_C)
+confint(model_BRIEF_C, level = 0.95)
+
+model_NWRS <- lm(NWRS ~., data = data[,c("NWRS", "HI")])
+summary(model_NWRS)
+confint(model_NWRS, level = 0.95)
+```
+
+## Correlations of the variables for The Frog Story for the all children
+Dependent variables (microstructures):
+
+- Morphosyntax: `MLU_frog`, `ungrammatical_frog`, `complex_frog`
+- Semantic pragmatics: `implicit_referents_frog`, `storylength_frog`
+- Communicative language: `mazes_frog` 
+
+Dependent variable (macrostructures): `plot_frog`
+
+Independent variables: `BRIEF_B`, `BRIEF_C`, `NWRS`
+
+```{r}
+dependent_variables_frog <- c(
+  "MLU_frog", 
+  "complex_frog",
+  "ungrammatical_frog",
+  "storylength_frog", 
+  "implicit_referents_frog",
+  "mazes_frog",
+  "plot_frog"
+)
+
+independent_variables_cognition <- c("BRIEF_B", "BRIEF_C", "NWRS")
+
+make_corrplot(data[c(dependent_variables_frog, independent_variables_cognition)], "The Frog Story, NWRS & BRIEF (total)")
+corr.test(data[c(dependent_variables_frog, independent_variables_cognition)])$p
+```
+
+## Correlations of the variables for The Frog Story for the HI-children
+Dependent variables (microstructures):
+
+- Morphosyntax: `MLU_frog`, `ungrammatical_frog`, `complex_frog`
+- Semantic pragmatics: `implicit_referents_frog`, `storylength_frog`
+- Communicative language: `mazes_frog` 
+
+Dependent variable (macrostructures): `plot_frog`
+
+Independent variables: `BRIEF_B`, `BRIEF_C`, `NWRS`
+
+```{r}
+make_corrplot(data_HI[c(dependent_variables_frog, independent_variables_cognition)], "The Frog Story, NWRS & BRIEF (HI)", cex=0.7, ncex=0.7)
+corr.test(data_HI[c(dependent_variables_frog, independent_variables_cognition)])$p
+```
+
+
+## Correlations of the variables for The Frog Story for the TD-children
+Dependent variables (microstructures):
+
+- Morphosyntax: `MLU_frog`, `ungrammatical_frog`, `complex_frog`
+- Semantic pragmatics: `implicit_referents_frog`, `storylength_frog`
+- Communicative language: `mazes_frog` 
+
+Dependent variable (macrostructures): `plot_frog`
+
+Independent variables: `BRIEF_B`, `BRIEF_C`, `NWRS`
+
+```{r}
+make_corrplot(data_TD[c(dependent_variables_frog, independent_variables_cognition)], "The Frog Story, NWRS & BRIEF (TD)")
+corr.test(data_TD[c(dependent_variables_frog, independent_variables_cognition)])$p
+```
+
+## Correlations of the variables for The Bus Story for the all children
+Dependent variables (microstructures):
+
+- Morphosyntax: `MLU_bus`, `ungrammatical_bus`, `complex_bus`
+- Semantic pragmatics: `implicit_referents_bus`, `storylength_bus`
+- Communicative language: `mazes_bus` 
+
+Dependent variable (macrostructures): `plot_bus`
+
+Independent variables: `BRIEF_B`, `BRIEF_C`, `NWRS`
+
+```{r}
+dependent_variables_bus <- c(
+  "MLU_bus", 
+  "complex_bus",
+  "ungrammatical_bus",
+  "storylength_bus", 
+  "implicit_referents_bus",
+  "mazes_bus",
+  "plot_bus"
+)
+
+make_corrplot(data[c(dependent_variables_bus, independent_variables_cognition)], "The Bus Story, NWRS & BRIEF (total)")
+corr.test(data[c(dependent_variables_bus, independent_variables_cognition)])$p
+```
+
+## Correlations of the variables for The Bus Story for the HI-children
+Dependent variables (microstructures):
+
+- Morphosyntax: `MLU_bus`, `ungrammatical_bus`, `complex_bus`
+- Semantic pragmatics: `implicit_referents_bus`, `storylength_bus`
+- Communicative language: `mazes_bus` 
+
+Dependent variable (macrostructures): `plot_bus`
+
+Independent variables: `BRIEF_B`, `BRIEF_C`, `NWRS`
+
+```{r}
+make_corrplot(data_HI[c(dependent_variables_bus, independent_variables_cognition)], "The Bus Story, NWRS & BRIEF (HI)")
+corr.test(data_HI[c(dependent_variables_bus, independent_variables_cognition)])$p
+```
+
+## Correlations of the variables for The Bus Story for the TD-children
+
+Dependent variables (microstructures):
+
+- Morphosyntax: `MLU_bus`, `ungrammatical_bus`, `complex_bus`
+- Semantic pragmatics: `implicit_referents_bus`, `storylength_bus`
+- Communicative language: `mazes_bus` 
+
+Dependent variable (macrostructures): `plot_bus`
+
+Independent variables: `BRIEF_B`, `BRIEF_C`, `NWRS`
+
+```{r}
+make_corrplot(data_TD[c(dependent_variables_bus, independent_variables_cognition)], "The Bus Story, NWRS & BRIEF (TD)", cex=0.7, ncex=0.7)
+corr.test(data_TD[c(dependent_variables_bus, independent_variables_cognition)])$p
+```
+
+
+# Correlations between rehabilitation and narrative abilities in HI-children
+
+## Correlations of the rehabilitation variables for The Frog Story for the HI-children
+Dependent variables (microstructures):
+
+- Morphosyntax: `MLU_frog`, `ungrammatical_frog`, `complex_frog`
+- Semantic pragmatics: `implicit_referents_frog`, `storylength_frog`
+- Communicative language: `mazes_frog` 
+
+Dependent variable (macrostructures): `plot_frog`
+
+Independent variables: `hearing_loss_best_ear`, `age_rehabilitation`, `speech_understanding_total`
+
+```{r}
+independent_variables_rehabilitation <- c("hearing_loss_best_ear", "age_rehabilitation", "speech_understanding_total")
+
+make_corrplot(data_HI[c(dependent_variables_frog, independent_variables_rehabilitation)], "The Frog Story, Hearing Loss, Age at the start of Rehabilitation & Speech Understanding")
+corr.test(data_HI[c(dependent_variables_frog, independent_variables_rehabilitation)])$p
+```
+
+
+## Correlations of the rehabilitation variables for The Bus Story for the HI-children
+Dependent variables (microstructures):
+
+- Morphosyntax: `MLU_bus`, `ungrammatical_bus`, `complex_bus`
+- Semantic pragmatics: `implicit_referents_bus`, `storylength_bus`
+- Communicative language: `mazes_bus` 
+
+Dependent variable (macrostructures): `plot_bus`
+
+Independent variables: `hearing_loss_best_ear`, `age_rehabilitation`, `speech_understanding_total`
+
+```{r}
+make_corrplot(data_HI[c(dependent_variables_bus, independent_variables_rehabilitation)], "The Bus Story, Hearing Loss, Age at the start of Rehabilitation & Speech Understanding")
+corr.test(data_HI[c(dependent_variables_bus, independent_variables_rehabilitation)])$p
+```

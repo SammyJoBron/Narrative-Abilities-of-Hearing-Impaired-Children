@@ -1,0 +1,49 @@
+old,new
+participant,participant
+HI,HI
+gender,gender
+date_of_birth,date_of_birth
+age,Age (in years)
+storylength_bus,Story length (the Bus)
+storylength_frog,Story length (the Frog)
+MLU_bus,MLU (the Bus)
+MLU_frog,MLU (the Frog)
+mazes_bus,Mazes (the Bus)
+mazes_frog,Mazes (the Frog)
+ungrammatical_bus,Ungrammatical utterances (the Bus)
+ungrammatical_frog,Ungrammatical utterances (the Frog)
+complex_bus,Complex utterances (the Bus)
+complex_frog,Complex utterances (the Frog)
+implicit_referents_bus,Implicit referents (the Bus)
+implicit_referents_frog,Implicit referents (the Frog)
+plot_bus,Plot elements (the Bus)
+bus_plot_incomplete,bus_plot_incomplete
+bus_plot_SI,bus_plot_SI
+plot_frog,Plot elements (the Frog)
+CELF.pre_BAV,CELF.pre_BAV
+CELF.pre_ZH,CELF.pre_ZH
+CELF.5_BAV,CELF.5_BAV
+CELF.5_ZH,CELF.5_ZH
+BRIEF_young_B,BRIEF_young_B
+BRIEF_young_E,BRIEF_young_E
+BRIEF_young_C,BRIEF_young_C
+BRIEF_old_B,BRIEF_old_B
+BRIEF_old_E,BRIEF_old_E
+BRIEF_old_C,BRIEF_old_C
+NWRS,NWR-S
+SON_young,SON_young
+WISC_old,WISC_old
+born,born
+test_date,test_date
+hearing_loss_L,hearing_loss_L
+hearing_loss_R,hearing_loss_R
+hearing_loss_best_ear,Hearing loss (best ear)
+speech_understanding_L,speech_understanding_L
+speech_understanding_R,speech_understanding_R
+speech_understanding_total,Speech understanding (total)
+dB,dB
+start_rehabilitation,start_rehabilitation
+age_rehabilitation,Age at the start of rehabilitation
+perceptive,perceptive
+BRIEF_B,BRIEF Behavior
+BRIEF_C,BRIEF Cognition
