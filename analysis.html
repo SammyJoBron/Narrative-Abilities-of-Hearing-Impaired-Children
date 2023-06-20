@@ -419,7 +419,6 @@ numeric_variables &lt;- c(
   &quot;age_rehabilitation&quot;
 )
 
-binary_variables &lt;- c(&quot;HI&quot;, &quot;gender&quot;, &quot;born&quot;, &quot;perceptive&quot;)
 describe(data)[numeric_variables, descriprive_columns]</code></pre>
 <pre><code>##                              min    max  mean    sd
 ## age                         4.42   8.92  6.62  1.26
@@ -551,34 +550,6 @@ contrasts (data$HI)</code></pre>
 <pre><code>##   -HI+TD
 ## 0    0.5
 ## 1   -0.5</code></pre>
-<pre class="r"><code># Binary variable `gender`
-data$gender &lt;- as.factor(data$gender)
-contrast &lt;- cbind (c(-0.5, +0.5))   # f = -0.5, m = +0.5
-colnames (contrast) &lt;- c(&quot;-f+m&quot;)
-contrasts (data$gender) &lt;- contrast
-contrasts (data$gender)</code></pre>
-<pre><code>##   -f+m
-## f -0.5
-## m  0.5</code></pre>
-<pre class="r"><code># Binary variable `born`
-data$born &lt;- as.factor(data$born)
-contrast &lt;- cbind (c(+0.5, -0.5))   # born = -0.5, not_born = +0.5
-colnames (contrast) &lt;- c(&quot;-born+not_born&quot;)
-contrasts (data$born) &lt;- contrast
-contrasts (data$born)</code></pre>
-<pre><code>##   -born+not_born
-## 0            0.5
-## 1           -0.5</code></pre>
-<pre class="r"><code># Variable perceptive can take three values
-data$perceptive &lt;- as.factor(data$perceptive)
-contrasts &lt;- cbind (c(-1/3, +2/3, -1/3), c(-0.5, 0, +0.5))   # alphabetical order: conductive, conductive_perceptive, perceptive
-colnames (contrasts) &lt;- c(&quot;-conductiveperceptive+conductive_perceptive&quot;, &quot;-conductive+perceptive&quot;)
-contrasts (data$perceptive) &lt;- contrasts
-contrasts(data$perceptive)</code></pre>
-<pre><code>##   -conductiveperceptive+conductive_perceptive -conductive+perceptive
-## 0                                  -0.3333333                   -0.5
-## 1                                   0.6666667                    0.0
-## 2                                  -0.3333333                    0.5</code></pre>
 </div>
 <div id="transforming-the-data-to-prepare-for-the-models" class="section level2">
 <h2>Transforming the data to prepare for the models</h2>
@@ -623,27 +594,27 @@ for (numeric_variable in numeric_variables) {
   new_column &lt;- transform_column(data, numeric_variable)
   data[numeric_variable] &lt;- new_column
 }</code></pre>
-<pre><code>## [1] &quot;For  age the skew was 0.120230685706391 and with sqrt 0.0173480521609494&quot;
-## [1] &quot;For  storylength_bus the skew was 0.332981078090758 and with sqrt 0.00741306995557083&quot;
+<pre><code>## [1] &quot;For  age the skew was 0.120230685706392 and with sqrt 0.0173480521609495&quot;
+## [1] &quot;For  storylength_bus the skew was 0.332981078090758 and with sqrt 0.00741306995557079&quot;
 ## [1] &quot;For  MLU_bus the skew was 1.33927989697446 and with current 1.33927989697446&quot;
-## [1] &quot;For  mazes_bus the skew was 2.99294009305164 and with log 0.61800750989985&quot;
+## [1] &quot;For  mazes_bus the skew was 2.99294009305163 and with log 0.618007509899851&quot;
 ## [1] &quot;For  ungrammatical_bus the skew was 0.510234642500528 and with sqrt 0.296016572804201&quot;
 ## [1] &quot;For  complex_bus the skew was 0.258096885835996 and with current 0.258096885835996&quot;
 ## [1] &quot;For  implicit_referents_bus the skew was 0.179622119579278 and with current 0.179622119579278&quot;
 ## [1] &quot;For  plot_bus the skew was 0.509843108192859 and with sqrt 0.164322885150094&quot;
-## [1] &quot;For  storylength_frog the skew was 0.813991308292082 and with log 0.310304007319277&quot;
+## [1] &quot;For  storylength_frog the skew was 0.813991308292082 and with log 0.310304007319276&quot;
 ## [1] &quot;For  MLU_frog the skew was 0.562231049030963 and with current 0.562231049030963&quot;
 ## [1] &quot;For  mazes_frog the skew was 1.07568643506207 and with cube 0.0637259328722308&quot;
 ## [1] &quot;For  ungrammatical_frog the skew was 0.840698257183108 and with log 0.0302456883283605&quot;
-## [1] &quot;For  complex_frog the skew was 0.686175374975404 and with sqrt 0.0766152252711343&quot;
+## [1] &quot;For  complex_frog the skew was 0.686175374975404 and with sqrt 0.0766152252711335&quot;
 ## [1] &quot;For  implicit_referents_frog the skew was 0.254430595656125 and with current 0.254430595656125&quot;
-## [1] &quot;For  plot_frog the skew was 0.876852860465151 and with sqrt 0.0336143765001947&quot;
-## [1] &quot;For  BRIEF_B the skew was 0.428633069545132 and with cube 0.0049817381595072&quot;
+## [1] &quot;For  plot_frog the skew was 0.876852860465151 and with sqrt 0.0336143765001946&quot;
+## [1] &quot;For  BRIEF_B the skew was 0.428633069545132 and with cube 0.00498173815950728&quot;
 ## [1] &quot;For  BRIEF_C the skew was 0.303074326614971 and with sqrt 0.0153183364957607&quot;
-## [1] &quot;For  NWRS the skew was 0.0807110522403631 and with current 0.0807110522403631&quot;
+## [1] &quot;For  NWRS the skew was 0.0807110522403637 and with current 0.0807110522403637&quot;
 ## [1] &quot;For  hearing_loss_L the skew was 0.0213615124017738 and with current 0.0213615124017738&quot;
 ## [1] &quot;For  hearing_loss_R the skew was 0.451002878978069 and with current 0.451002878978069&quot;
-## [1] &quot;For  speech_understanding_L the skew was 0.294417066308212 and with current 0.294417066308212&quot;
+## [1] &quot;For  speech_understanding_L the skew was 0.294417066308213 and with current 0.294417066308213&quot;
 ## [1] &quot;For  speech_understanding_R the skew was 1.55106516892622 and with current 1.55106516892622&quot;
 ## [1] &quot;For  speech_understanding_total the skew was 2.47486017336509 and with current 2.47486017336509&quot;
 ## [1] &quot;For  age_rehabilitation the skew was 0.753751108776733 and with cube 0.057728682183647&quot;</code></pre>
@@ -651,115 +622,46 @@ for (numeric_variable in numeric_variables) {
 mean to zero.</p>
 <pre class="r"><code>data[numeric_variables] &lt;- scale(data[numeric_variables], scale=FALSE)</code></pre>
 </div>
-<div id="plotting-the-correlation-matrices" class="section level2">
-<h2>Plotting the correlation matrices</h2>
-<p>A helper function is used to plot the correlation matrices in a
-directory.</p>
-<pre class="r"><code>new_colname &lt;- function(column_name) {
-  title &lt;- column_name
-
-  names_plot &lt;- read.csv(file=&quot;./descriptive_colnames.csv&quot;)
-  title &lt;- names_plot[names_plot[&quot;old&quot;] == column_name]
-
-  if (length(title &gt; 0 )) {  # Update the title if a rename exists
-    title &lt;- title[[2]]
-  }
-
-  return(title)
-}
-
-make_corrplot &lt;- function(all_data, file_name, path_name=&quot;corrplots&quot;, cex=0.7, ncex=0.7) {
-  dir.create(path_name, showWarnings = FALSE)
-  file_path &lt;- paste(&quot;./&quot;, path_name,&quot;/&quot;, file_name, &quot;.png&quot;, sep=&quot;&quot;)
-  
-  colnames(all_data) &lt;- unlist(lapply(colnames(all_data), new_colname))
-
-  png(height=1800, width=1800, file=file_path)
-  corr_matrix &lt;- corr.test(all_data)
-  fctr &lt;- 4
-  
-  corrplot(
-      corr_matrix$r, title=paste(&quot;The Correlation Matrix For&quot;, file_name), p.mat = t(corr_matrix$p), insig=&quot;blank&quot;,
-      cex.main=fctr,
-      bg=&quot;gray92&quot;,
-      tl.cex=fctr*cex,
-      cl.cex=fctr*0.8,
-      type=&quot;upper&quot;,
-      diag = FALSE,
-      method=&quot;color&quot;,
-      addgrid.col = &quot;darkgray&quot;,
-      number.cex = fctr*ncex,
-      mar = c(fctr*2, fctr*2, fctr*3, fctr*2), # margins
-      tl.col=&quot;black&quot;,
-      tl.offset=fctr*0.4
-    )$corrPos -&gt; corr_positions
-  text(corr_positions$x, corr_positions$y, round(corr_positions$corr, 2), cex=fctr*ncex)
-  
-  # Surpress the output of the dev.of
-  sink(&quot;tmp.log&quot;)
-  dev.off()
-  sink()
-  file_removed &lt;- file.remove(&quot;tmp.log&quot;)
-}
-
-numeric_variables_both = c(
-  &quot;age&quot;,
-  &quot;BRIEF_B&quot;,
-  &quot;BRIEF_C&quot;,
-  &quot;NWRS&quot;,
-  &quot;hearing_loss_L&quot;, 
-  &quot;hearing_loss_R&quot;,
-  &quot;speech_understanding_L&quot;, 
-  &quot;speech_understanding_R&quot;, 
-  &quot;speech_understanding_total&quot;,
-  &quot;age_rehabilitation&quot;
-)
-
-numeric_variables_for_cor_bus &lt;- c(
-  &quot;storylength_bus&quot;, 
-  &quot;MLU_bus&quot;, 
-  &quot;mazes_bus&quot;, 
-  &quot;ungrammatical_bus&quot;, 
-  &quot;complex_bus&quot;, 
-  &quot;implicit_referents_bus&quot;,
-  &quot;plot_bus&quot;,
-  
-  numeric_variables_both
-)
-
-numeric_variables_for_cor_frog &lt;- c(
-  &quot;storylength_frog&quot;, 
-  &quot;MLU_frog&quot;, 
-  &quot;mazes_frog&quot;, 
-  &quot;ungrammatical_frog&quot;, 
-  &quot;complex_frog&quot;, 
-  &quot;implicit_referents_frog&quot;,
-  &quot;plot_frog&quot;,
-  
-  numeric_variables_both
-)
-
-make_corrplot(data[,numeric_variables_for_cor_bus], &quot;correlation_matrix_bus&quot;, cex=0.6, ncex=0.4)
-make_corrplot(data[,numeric_variables_for_cor_frog], &quot;correlation_matrix_frog&quot;, cex=0.6, ncex=0.4)</code></pre>
-<p>The p-values for the correlations are shown as well.</p>
+<div id="checking-correlations-for-the-morphosyntactic-and-semantic-pragmatic-structures" class="section level2">
+<h2>Checking correlations for the morphosyntactic and semantic-pragmatic
+structures</h2>
+<p>The correlations including their <em>p</em>-values are shown.</p>
+<pre class="r"><code>corr.test(data[c(&quot;MLU_bus&quot;,  &quot;complex_bus&quot;, &quot;ungrammatical_bus&quot;)])$r</code></pre>
+<pre><code>##                      MLU_bus complex_bus ungrammatical_bus
+## MLU_bus            1.0000000   0.6632170        -0.4358734
+## complex_bus        0.6632170   1.0000000        -0.3871808
+## ungrammatical_bus -0.4358734  -0.3871808         1.0000000</code></pre>
 <pre class="r"><code>corr.test(data[c(&quot;MLU_bus&quot;,  &quot;complex_bus&quot;, &quot;ungrammatical_bus&quot;)])$p</code></pre>
-<pre><code>##                        MLU_bus  complex_bus ungrammatical_bus
-## MLU_bus           0.000000e+00 9.320256e-06        0.00986555
-## complex_bus       3.106752e-06 0.000000e+00        0.01357888
-## ungrammatical_bus 4.932775e-03 1.357888e-02        0.00000000</code></pre>
+<pre><code>##                        MLU_bus   complex_bus ungrammatical_bus
+## MLU_bus           0.000000e+00  9.320256e-06        0.00986555
+## complex_bus       3.106752e-06 4.915364e-299        0.01357888
+## ungrammatical_bus 4.932775e-03  1.357888e-02        0.00000000</code></pre>
+<pre class="r"><code>corr.test(data[c(&quot;implicit_referents_bus&quot;, &quot;storylength_bus&quot;)])$r</code></pre>
+<pre><code>##                        implicit_referents_bus storylength_bus
+## implicit_referents_bus             1.00000000     -0.05500599
+## storylength_bus                   -0.05500599      1.00000000</code></pre>
 <pre class="r"><code>corr.test(data[c(&quot;implicit_referents_bus&quot;, &quot;storylength_bus&quot;)])$p</code></pre>
 <pre><code>##                        implicit_referents_bus storylength_bus
-## implicit_referents_bus              0.0000000       0.7360323
-## storylength_bus                     0.7360323       0.0000000</code></pre>
+## implicit_referents_bus              0.0000000    7.360323e-01
+## storylength_bus                     0.7360323   2.577066e-293</code></pre>
+<pre class="r"><code>corr.test(data[c(&quot;MLU_frog&quot;,  &quot;complex_frog&quot;, &quot;ungrammatical_frog&quot;)])$r</code></pre>
+<pre><code>##                      MLU_frog complex_frog ungrammatical_frog
+## MLU_frog            1.0000000    0.5233261         -0.4938676
+## complex_frog        0.5233261    1.0000000         -0.1990893
+## ungrammatical_frog -0.4938676   -0.1990893          1.0000000</code></pre>
 <pre class="r"><code>corr.test(data[c(&quot;MLU_frog&quot;,  &quot;complex_frog&quot;, &quot;ungrammatical_frog&quot;)])$p</code></pre>
 <pre><code>##                        MLU_frog complex_frog ungrammatical_frog
 ## MLU_frog           0.0000000000  0.001888834        0.002794851
 ## complex_frog       0.0006296113  0.000000000        0.224339667
 ## ungrammatical_frog 0.0013974253  0.224339667        0.000000000</code></pre>
+<pre class="r"><code>corr.test(data[c(&quot;implicit_referents_frog&quot;, &quot;storylength_frog&quot;)])$r</code></pre>
+<pre><code>##                         implicit_referents_frog storylength_frog
+## implicit_referents_frog              1.00000000      -0.08936673
+## storylength_frog                    -0.08936673       1.00000000</code></pre>
 <pre class="r"><code>corr.test(data[c(&quot;implicit_referents_frog&quot;, &quot;storylength_frog&quot;)])$p</code></pre>
 <pre><code>##                         implicit_referents_frog storylength_frog
-## implicit_referents_frog               0.0000000        0.5884926
-## storylength_frog                      0.5884926        0.0000000</code></pre>
+## implicit_referents_frog               0.0000000     5.884926e-01
+## storylength_frog                      0.5884926    3.342330e-291</code></pre>
 </div>
 </div>
 <div id="the-effect-of-hi-on-narrative-abilities" class="section level1">
@@ -985,9 +887,9 @@ summary(model_MLU_bus)</code></pre>
 ## -5.1785 -0.6383  0.1950  0.8958  2.7915 
 ## 
 ## Coefficients:
-##               Estimate Std. Error t value Pr(&gt;|t|)  
-## (Intercept) -1.489e-16  2.333e-01   0.000   1.0000  
-## HI-HI+TD     1.223e+00  4.667e-01   2.621   0.0125 *
+##              Estimate Std. Error t value Pr(&gt;|t|)  
+## (Intercept) 6.368e-16  2.333e-01   0.000   1.0000  
+## HI-HI+TD    1.223e+00  4.667e-01   2.621   0.0125 *
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
@@ -1011,8 +913,8 @@ summary(model_complex_bus)</code></pre>
 ## 
 ## Coefficients:
 ##               Estimate Std. Error t value Pr(&gt;|t|)  
-## (Intercept) -1.125e-15  2.032e+00   0.000   1.0000  
-## HI-HI+TD     1.061e+01  4.065e+00   2.609   0.0129 *
+## (Intercept) -2.946e-15  2.032e+00   0.000   1.0000  
+## HI-HI+TD     1.060e+01  4.065e+00   2.609   0.0129 *
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
@@ -1036,7 +938,7 @@ summary(model_ungrammatical_bus)</code></pre>
 ## 
 ## Coefficients:
 ##               Estimate Std. Error t value Pr(&gt;|t|)  
-## (Intercept)  3.148e-16  2.964e-01   0.000   1.0000  
+## (Intercept) -7.848e-16  2.964e-01   0.000   1.0000  
 ## HI-HI+TD    -1.502e+00  5.927e-01  -2.534   0.0155 *
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
@@ -1061,7 +963,7 @@ summary(model_storylength_bus)</code></pre>
 ## 
 ## Coefficients:
 ##               Estimate Std. Error t value Pr(&gt;|t|)  
-## (Intercept)  1.741e-16  7.743e-02   0.000   1.0000  
+## (Intercept)  2.263e-16  7.743e-02   0.000   1.0000  
 ## HI-HI+TD    -2.836e-01  1.549e-01  -1.831   0.0749 .
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
@@ -1086,7 +988,7 @@ summary(model_implicit_referents_bus)</code></pre>
 ## 
 ## Coefficients:
 ##               Estimate Std. Error t value Pr(&gt;|t|)
-## (Intercept) -2.694e-15  5.201e+00   0.000    1.000
+## (Intercept)  1.334e-14  5.201e+00   0.000    1.000
 ## HI-HI+TD    -1.633e+00  1.040e+01  -0.157    0.876
 ## 
 ## Residual standard error: 32.89 on 38 degrees of freedom
@@ -1107,9 +1009,9 @@ summary(model_mazes_bus)</code></pre>
 ## -2.21174 -0.26200 -0.08879  0.47126  2.02815 
 ## 
 ## Coefficients:
-##              Estimate Std. Error t value Pr(&gt;|t|)
-## (Intercept) 4.422e-19  1.159e-01   0.000    1.000
-## HI-HI+TD    3.190e-01  2.318e-01   1.376    0.177
+##               Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) -4.302e-16  1.159e-01   0.000    1.000
+## HI-HI+TD     3.190e-01  2.318e-01   1.376    0.177
 ## 
 ## Residual standard error: 0.7332 on 38 degrees of freedom
 ## Multiple R-squared:  0.04744,    Adjusted R-squared:  0.02238 
@@ -1129,9 +1031,9 @@ summary(model_plot_bus)</code></pre>
 ## -3.461 -1.175  0.152  1.014  3.088 
 ## 
 ## Coefficients:
-##              Estimate Std. Error t value Pr(&gt;|t|)
-## (Intercept) 3.154e-16  2.793e-01   0.000    1.000
-## HI-HI+TD    7.412e-01  5.587e-01   1.327    0.193
+##               Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) -4.688e-16  2.793e-01   0.000    1.000
+## HI-HI+TD     7.412e-01  5.587e-01   1.327    0.193
 ## 
 ## Residual standard error: 1.767 on 38 degrees of freedom
 ## Multiple R-squared:  0.04426,    Adjusted R-squared:  0.01911 
@@ -1145,7 +1047,7 @@ summary(model_plot_bus)</code></pre>
 <div id="correlations-between-phonological-processing-executive-functions-and-narrative-abilities" class="section level1">
 <h1>Correlations between phonological processing, executive functions
 and narrative abilities</h1>
-<p>Here, the correlations of several variables regarding phonological
+<p>The correlations of several variables regarding phonological
 processing, executive functions and narrative abilities are
 computed.</p>
 <div id="the-effect-of-hi-on-the-brief-and-the-nwr-s" class="section level2">
@@ -1229,6 +1131,54 @@ summary(model_NWRS)</code></pre>
 <div id="correlations-of-the-variables-for-the-frog-story-for-the-all-children" class="section level2">
 <h2>Correlations of the variables for The Frog Story for the all
 children</h2>
+<p>A helper function is used to plot the correlation matrices in a
+directory.</p>
+<pre class="r"><code>new_colname &lt;- function(column_name) {
+  title &lt;- column_name
+
+  names_plot &lt;- read.csv(file=&quot;./descriptive_colnames.csv&quot;)
+  title &lt;- names_plot[names_plot[&quot;old&quot;] == column_name]
+
+  if (length(title &gt; 0 )) {  # Update the title if a rename exists
+    title &lt;- title[[2]]
+  }
+
+  return(title)
+}
+
+make_corrplot &lt;- function(all_data, file_name, path_name=&quot;corrplots&quot;, cex=0.7, ncex=0.7) {
+  dir.create(path_name, showWarnings = FALSE)
+  file_path &lt;- paste(&quot;./&quot;, path_name,&quot;/&quot;, file_name, &quot;.png&quot;, sep=&quot;&quot;)
+  
+  colnames(all_data) &lt;- unlist(lapply(colnames(all_data), new_colname))
+
+  png(height=1800, width=1800, file=file_path)
+  corr_matrix &lt;- corr.test(all_data)
+  fctr &lt;- 4
+  
+  corrplot(
+      corr_matrix$r, title=paste(&quot;The Correlation Matrix For&quot;, file_name), p.mat = t(corr_matrix$p), insig=&quot;blank&quot;,
+      cex.main=fctr,
+      bg=&quot;gray92&quot;,
+      tl.cex=fctr*cex,
+      cl.cex=fctr*0.8,
+      type=&quot;upper&quot;,
+      diag = FALSE,
+      method=&quot;color&quot;,
+      addgrid.col = &quot;darkgray&quot;,
+      number.cex = fctr*ncex,
+      mar = c(fctr*2, fctr*2, fctr*3, fctr*2), # margins
+      tl.col=&quot;black&quot;,
+      tl.offset=fctr*0.4
+    )$corrPos -&gt; corr_positions
+  text(corr_positions$x, corr_positions$y, round(corr_positions$corr, 2), cex=fctr*ncex)
+  
+  # Surpress the output of the dev.of
+  sink(&quot;tmp.log&quot;)
+  dev.off()
+  sink()
+  file_removed &lt;- file.remove(&quot;tmp.log&quot;)
+}</code></pre>
 <p>Dependent variables (microstructures):</p>
 <ul>
 <li>Morphosyntax: <code>MLU_frog</code>,
@@ -1252,7 +1202,7 @@ children</h2>
 
 independent_variables_cognition &lt;- c(&quot;BRIEF_B&quot;, &quot;BRIEF_C&quot;, &quot;NWRS&quot;)
 
-make_corrplot(data[c(dependent_variables_frog, independent_variables_cognition)], &quot;The Frog Story, NWRS &amp; BRIEF (total)&quot;)
+make_corrplot(data[c(dependent_variables_frog, independent_variables_cognition)], &quot;The Frog Story, NWR-S &amp; BRIEF (total)&quot;)
 corr.test(data[c(dependent_variables_frog, independent_variables_cognition)])$p</code></pre>
 <pre><code>##                             MLU_frog complex_frog ungrammatical_frog
 ## MLU_frog                0.0000000000    0.0277029         0.06008929
@@ -1266,16 +1216,16 @@ corr.test(data[c(dependent_variables_frog, independent_variables_cognition)])$p<
 ## BRIEF_C                 0.2154257561    0.7344729         0.99482233
 ## NWRS                    0.1843197422    0.5789457         0.03971632
 ##                         storylength_frog implicit_referents_frog mazes_frog
-## MLU_frog                      1.00000000             1.000000000  1.0000000
-## complex_frog                  1.00000000             1.000000000  1.0000000
-## ungrammatical_frog            1.00000000             1.000000000  1.0000000
-## storylength_frog              0.00000000             1.000000000  1.0000000
-## implicit_referents_frog       0.58849264             0.000000000  1.0000000
-## mazes_frog                    0.50639850             0.647938534  0.0000000
-## plot_frog                     0.06282777             0.003499923  0.4338865
-## BRIEF_B                       0.25234048             0.191287592  0.3353902
-## BRIEF_C                       0.02892542             0.023485851  0.3774403
-## NWRS                          0.97295587             0.541229047  0.7389656
+## MLU_frog                    1.000000e+00             1.000000000  1.0000000
+## complex_frog                1.000000e+00             1.000000000  1.0000000
+## ungrammatical_frog          1.000000e+00             1.000000000  1.0000000
+## storylength_frog           3.342330e-291             1.000000000  1.0000000
+## implicit_referents_frog     5.884926e-01             0.000000000  1.0000000
+## mazes_frog                  5.063985e-01             0.647938534  0.0000000
+## plot_frog                   6.282777e-02             0.003499923  0.4338865
+## BRIEF_B                     2.523405e-01             0.191287592  0.3353902
+## BRIEF_C                     2.892542e-02             0.023485851  0.3774403
+## NWRS                        9.729559e-01             0.541229047  0.7389656
 ##                           plot_frog      BRIEF_B      BRIEF_C    NWRS
 ## MLU_frog                0.063360441 1.000000e+00 1.000000e+00 1.00000
 ## complex_frog            1.000000000 1.000000e+00 1.000000e+00 1.00000
@@ -1302,19 +1252,19 @@ HI-children</h2>
 <p>Dependent variable (macrostructures): <code>plot_frog</code></p>
 <p>Independent variables: <code>BRIEF_B</code>, <code>BRIEF_C</code>,
 <code>NWRS</code></p>
-<pre class="r"><code>make_corrplot(data_HI[c(dependent_variables_frog, independent_variables_cognition)], &quot;The Frog Story, NWRS &amp; BRIEF (HI)&quot;, cex=0.7, ncex=0.7)
+<pre class="r"><code>make_corrplot(data_HI[c(dependent_variables_frog, independent_variables_cognition)], &quot;The Frog Story, NWR-S &amp; BRIEF (HI)&quot;, cex=0.7, ncex=0.7)
 corr.test(data_HI[c(dependent_variables_frog, independent_variables_cognition)])$p</code></pre>
-<pre><code>##                            MLU_frog complex_frog ungrammatical_frog
-## MLU_frog                0.000000000    0.1576562          0.2237898
-## complex_frog            0.003503471    0.0000000          1.0000000
-## ungrammatical_frog      0.005086132    0.2741238          0.0000000
-## storylength_frog        0.069826171    0.2275517          0.7766348
-## implicit_referents_frog 0.325621126    0.1552501          0.8547486
-## mazes_frog              0.562280840    0.8705955          0.8458646
-## plot_frog               0.014381342    0.3262223          0.2667844
-## BRIEF_B                 0.651971243    0.1945888          0.7450966
-## BRIEF_C                 0.769779396    0.6479216          0.9922548
-## NWRS                    0.718720185    0.8366740          0.2176475
+<pre><code>##                            MLU_frog  complex_frog ungrammatical_frog
+## MLU_frog                0.000000000  1.576562e-01          0.2237898
+## complex_frog            0.003503471 1.679092e-134          1.0000000
+## ungrammatical_frog      0.005086132  2.741238e-01          0.0000000
+## storylength_frog        0.069826171  2.275517e-01          0.7766348
+## implicit_referents_frog 0.325621126  1.552501e-01          0.8547486
+## mazes_frog              0.562280840  8.705955e-01          0.8458646
+## plot_frog               0.014381342  3.262223e-01          0.2667844
+## BRIEF_B                 0.651971243  1.945888e-01          0.7450966
+## BRIEF_C                 0.769779396  6.479216e-01          0.9922548
+## NWRS                    0.718720185  8.366740e-01          0.2176475
 ##                         storylength_frog implicit_referents_frog mazes_frog
 ## MLU_frog                      1.00000000               1.0000000  1.0000000
 ## complex_frog                  1.00000000               1.0000000  1.0000000
@@ -1326,17 +1276,17 @@ corr.test(data_HI[c(dependent_variables_frog, independent_variables_cognition)])
 ## BRIEF_B                       0.15727726               0.9411010  0.8145479
 ## BRIEF_C                       0.13456203               0.4428252  0.9973605
 ## NWRS                          0.73048191               0.6190908  0.4956746
-##                         plot_frog    BRIEF_B   BRIEF_C NWRS
-## MLU_frog                0.6183977 1.00000000 1.0000000    1
-## complex_frog            1.0000000 1.00000000 1.0000000    1
-## ungrammatical_frog      1.0000000 1.00000000 1.0000000    1
-## storylength_frog        1.0000000 1.00000000 1.0000000    1
-## implicit_referents_frog 1.0000000 1.00000000 1.0000000    1
-## mazes_frog              1.0000000 1.00000000 1.0000000    1
-## plot_frog               0.0000000 1.00000000 1.0000000    1
-## BRIEF_B                 0.6062582 0.00000000 0.9726579    1
-## BRIEF_C                 0.2891981 0.02315852 0.0000000    1
-## NWRS                    0.1585038 0.86603575 0.7782455    0</code></pre>
+##                         plot_frog      BRIEF_B      BRIEF_C NWRS
+## MLU_frog                0.6183977 1.000000e+00 1.000000e+00    1
+## complex_frog            1.0000000 1.000000e+00 1.000000e+00    1
+## ungrammatical_frog      1.0000000 1.000000e+00 1.000000e+00    1
+## storylength_frog        1.0000000 1.000000e+00 1.000000e+00    1
+## implicit_referents_frog 1.0000000 1.000000e+00 1.000000e+00    1
+## mazes_frog              1.0000000 1.000000e+00 1.000000e+00    1
+## plot_frog               0.0000000 1.000000e+00 1.000000e+00    1
+## BRIEF_B                 0.6062582 4.250614e-78 9.726579e-01    1
+## BRIEF_C                 0.2891981 2.315852e-02 1.328317e-79    1
+## NWRS                    0.1585038 8.660358e-01 7.782455e-01    0</code></pre>
 </div>
 <div id="correlations-of-the-variables-for-the-frog-story-for-the-td-children" class="section level2">
 <h2>Correlations of the variables for The Frog Story for the
@@ -1352,41 +1302,41 @@ TD-children</h2>
 <p>Dependent variable (macrostructures): <code>plot_frog</code></p>
 <p>Independent variables: <code>BRIEF_B</code>, <code>BRIEF_C</code>,
 <code>NWRS</code></p>
-<pre class="r"><code>make_corrplot(data_TD[c(dependent_variables_frog, independent_variables_cognition)], &quot;The Frog Story, NWRS &amp; BRIEF (TD)&quot;)
+<pre class="r"><code>make_corrplot(data_TD[c(dependent_variables_frog, independent_variables_cognition)], &quot;The Frog Story, NWR-S &amp; BRIEF (TD)&quot;)
 corr.test(data_TD[c(dependent_variables_frog, independent_variables_cognition)])$p</code></pre>
-<pre><code>##                           MLU_frog complex_frog ungrammatical_frog
-## MLU_frog                0.00000000    1.0000000         1.00000000
-## complex_frog            0.24853659    0.0000000         1.00000000
-## ungrammatical_frog      0.08949754    0.6301473         0.00000000
-## storylength_frog        0.56143714    0.5448129         0.25591520
-## implicit_referents_frog 0.08297759    0.6654421         0.87496090
-## mazes_frog              0.29274528    0.8746263         0.94222514
-## plot_frog               0.02489116    0.3628284         0.05114558
-## BRIEF_B                 0.16348111    0.3367597         0.90834182
-## BRIEF_C                 0.37501962    0.5767790         0.71532124
-## NWRS                    0.20954247    0.9532146         0.29926363
-##                         storylength_frog implicit_referents_frog mazes_frog
-## MLU_frog                       1.0000000             1.000000000  1.0000000
-## complex_frog                   1.0000000             1.000000000  1.0000000
-## ungrammatical_frog             1.0000000             1.000000000  1.0000000
-## storylength_frog               0.0000000             1.000000000  1.0000000
-## implicit_referents_frog        0.5797781             0.000000000  1.0000000
-## mazes_frog                     0.9790907             0.273719489  0.0000000
-## plot_frog                      0.3121816             0.001151081  0.5407199
-## BRIEF_B                        0.9227125             0.036888965  0.4471773
-## BRIEF_C                        0.1997479             0.007272252  0.6933798
-## NWRS                           0.6297135             0.801773513  0.9265853
-##                          plot_frog      BRIEF_B    BRIEF_C NWRS
-## MLU_frog                1.00000000 1.0000000000 1.00000000    1
-## complex_frog            1.00000000 1.0000000000 1.00000000    1
-## ungrammatical_frog      1.00000000 1.0000000000 1.00000000    1
-## storylength_frog        1.00000000 1.0000000000 1.00000000    1
-## implicit_referents_frog 0.05064758 1.0000000000 0.31270682    1
-## mazes_frog              1.00000000 1.0000000000 1.00000000    1
-## plot_frog               0.00000000 1.0000000000 0.75463367    1
-## BRIEF_B                 0.02522501 0.0000000000 0.03206273    1
-## BRIEF_C                 0.01796747 0.0007125051 0.00000000    1
-## NWRS                    0.06356970 0.7903873785 0.50124610    0</code></pre>
+<pre><code>##                              MLU_frog complex_frog ungrammatical_frog
+## MLU_frog                2.433532e-142    1.0000000         1.00000000
+## complex_frog             2.485366e-01    0.0000000         1.00000000
+## ungrammatical_frog       8.949754e-02    0.6301473         0.00000000
+## storylength_frog         5.614371e-01    0.5448129         0.25591520
+## implicit_referents_frog  8.297759e-02    0.6654421         0.87496090
+## mazes_frog               2.927453e-01    0.8746263         0.94222514
+## plot_frog                2.489116e-02    0.3628284         0.05114558
+## BRIEF_B                  1.634811e-01    0.3367597         0.90834182
+## BRIEF_C                  3.750196e-01    0.5767790         0.71532124
+## NWRS                     2.095425e-01    0.9532146         0.29926363
+##                         storylength_frog implicit_referents_frog    mazes_frog
+## MLU_frog                    1.000000e+00             1.000000000  1.000000e+00
+## complex_frog                1.000000e+00             1.000000000  1.000000e+00
+## ungrammatical_frog          1.000000e+00             1.000000000  1.000000e+00
+## storylength_frog           2.433532e-142             1.000000000  1.000000e+00
+## implicit_referents_frog     5.797781e-01             0.000000000  1.000000e+00
+## mazes_frog                  9.790907e-01             0.273719489 2.433532e-142
+## plot_frog                   3.121816e-01             0.001151081  5.407199e-01
+## BRIEF_B                     9.227125e-01             0.036888965  4.471773e-01
+## BRIEF_C                     1.997479e-01             0.007272252  6.933798e-01
+## NWRS                        6.297135e-01             0.801773513  9.265853e-01
+##                          plot_frog       BRIEF_B    BRIEF_C NWRS
+## MLU_frog                1.00000000  1.000000e+00 1.00000000    1
+## complex_frog            1.00000000  1.000000e+00 1.00000000    1
+## ungrammatical_frog      1.00000000  1.000000e+00 1.00000000    1
+## storylength_frog        1.00000000  1.000000e+00 1.00000000    1
+## implicit_referents_frog 0.05064758  1.000000e+00 0.31270682    1
+## mazes_frog              1.00000000  1.000000e+00 1.00000000    1
+## plot_frog               0.00000000  1.000000e+00 0.75463367    1
+## BRIEF_B                 0.02522501 1.245968e-139 0.03206273    1
+## BRIEF_C                 0.01796747  7.125051e-04 0.00000000    1
+## NWRS                    0.06356970  7.903874e-01 0.50124610    0</code></pre>
 </div>
 <div id="correlations-of-the-variables-for-the-bus-story-for-the-all-children" class="section level2">
 <h2>Correlations of the variables for The Bus Story for the all
@@ -1412,30 +1362,30 @@ children</h2>
   &quot;plot_bus&quot;
 )
 
-make_corrplot(data[c(dependent_variables_bus, independent_variables_cognition)], &quot;The Bus Story, NWRS &amp; BRIEF (total)&quot;)
+make_corrplot(data[c(dependent_variables_bus, independent_variables_cognition)], &quot;The Bus Story, NWR-S &amp; BRIEF (total)&quot;)
 corr.test(data[c(dependent_variables_bus, independent_variables_cognition)])$p</code></pre>
-<pre><code>##                             MLU_bus  complex_bus ungrammatical_bus
-## MLU_bus                0.000000e+00 1.366971e-04      0.1923782235
-## complex_bus            3.106752e-06 0.000000e+00      0.4752606927
-## ungrammatical_bus      4.932775e-03 1.357888e-02      0.0000000000
-## storylength_bus        8.960256e-01 5.678453e-01      0.3417649332
-## implicit_referents_bus 1.430630e-01 1.791462e-01      0.0167488258
-## mazes_bus              9.881631e-01 7.911190e-01      0.2745241429
-## plot_bus               7.809316e-06 4.885204e-05      0.0016364794
-## BRIEF_B                3.828094e-02 3.572803e-01      0.5021051402
-## BRIEF_C                1.039553e-01 7.901162e-02      0.2135929645
-## NWRS                   1.070057e-01 2.256184e-01      0.0007864577
+<pre><code>##                             MLU_bus   complex_bus ungrammatical_bus
+## MLU_bus                0.000000e+00  1.366971e-04      0.1923782235
+## complex_bus            3.106752e-06 4.915364e-299      0.4752606927
+## ungrammatical_bus      4.932775e-03  1.357888e-02      0.0000000000
+## storylength_bus        8.960256e-01  5.678453e-01      0.3417649332
+## implicit_referents_bus 1.430630e-01  1.791462e-01      0.0167488258
+## mazes_bus              9.881631e-01  7.911190e-01      0.2745241429
+## plot_bus               7.809316e-06  4.885204e-05      0.0016364794
+## BRIEF_B                3.828094e-02  3.572803e-01      0.5021051402
+## BRIEF_C                1.039553e-01  7.901162e-02      0.2135929645
+## NWRS                   1.070057e-01  2.256184e-01      0.0007864577
 ##                        storylength_bus implicit_referents_bus mazes_bus
-## MLU_bus                     1.00000000             1.00000000 1.0000000
-## complex_bus                 1.00000000             1.00000000 1.0000000
-## ungrammatical_bus           1.00000000             0.56749475 1.0000000
-## storylength_bus             0.00000000             1.00000000 1.0000000
-## implicit_referents_bus      0.73603226             0.00000000 1.0000000
-## mazes_bus                   0.71850462             0.17526375 0.0000000
-## plot_bus                    0.01669102             0.01259561 0.7936175
-## BRIEF_B                     0.62511256             0.89968864 0.8467100
-## BRIEF_C                     0.87237787             0.17503676 0.3997464
-## NWRS                        0.65868005             0.05519701 0.7094862
+## MLU_bus                   1.000000e+00             1.00000000 1.0000000
+## complex_bus               1.000000e+00             1.00000000 1.0000000
+## ungrammatical_bus         1.000000e+00             0.56749475 1.0000000
+## storylength_bus          2.577066e-293             1.00000000 1.0000000
+## implicit_referents_bus    7.360323e-01             0.00000000 1.0000000
+## mazes_bus                 7.185046e-01             0.17526375 0.0000000
+## plot_bus                  1.669102e-02             0.01259561 0.7936175
+## BRIEF_B                   6.251126e-01             0.89968864 0.8467100
+## BRIEF_C                   8.723779e-01             0.17503676 0.3997464
+## NWRS                      6.586800e-01             0.05519701 0.7094862
 ##                            plot_bus      BRIEF_B      BRIEF_C       NWRS
 ## MLU_bus                0.0003358006 1.000000e+00 1.000000e+00 1.00000000
 ## complex_bus            0.0020517859 1.000000e+00 1.000000e+00 1.00000000
@@ -1462,19 +1412,19 @@ HI-children</h2>
 <p>Dependent variable (macrostructures): <code>plot_bus</code></p>
 <p>Independent variables: <code>BRIEF_B</code>, <code>BRIEF_C</code>,
 <code>NWRS</code></p>
-<pre class="r"><code>make_corrplot(data_HI[c(dependent_variables_bus, independent_variables_cognition)], &quot;The Bus Story, NWRS &amp; BRIEF (HI)&quot;)
+<pre class="r"><code>make_corrplot(data_HI[c(dependent_variables_bus, independent_variables_cognition)], &quot;The Bus Story, NWR-S &amp; BRIEF (HI)&quot;)
 corr.test(data_HI[c(dependent_variables_bus, independent_variables_cognition)])$p</code></pre>
 <pre><code>##                             MLU_bus complex_bus ungrammatical_bus
-## MLU_bus                0.0000000000 0.028043557        1.00000000
-## complex_bus            0.0006231902 0.000000000        1.00000000
-## ungrammatical_bus      0.1020496892 0.034922303        0.00000000
-## storylength_bus        0.9015960976 0.353696523        0.25827979
-## implicit_referents_bus 0.4606351302 0.562095768        0.06437249
-## mazes_bus              0.0137306976 0.386845196        0.56067819
-## plot_bus               0.0036564305 0.001258672        0.13879202
-## BRIEF_B                0.2567650301 0.854282461        0.28739134
-## BRIEF_C                0.2788495580 0.439404937        0.70810438
-## NWRS                   0.6822517586 0.474433857        0.21512721
+## MLU_bus                0.0000000000 0.028043557      1.000000e+00
+## complex_bus            0.0006231902 0.000000000      1.000000e+00
+## ungrammatical_bus      0.1020496892 0.034922303     1.245968e-139
+## storylength_bus        0.9015960976 0.353696523      2.582798e-01
+## implicit_referents_bus 0.4606351302 0.562095768      6.437249e-02
+## mazes_bus              0.0137306976 0.386845196      5.606782e-01
+## plot_bus               0.0036564305 0.001258672      1.387920e-01
+## BRIEF_B                0.2567650301 0.854282461      2.873913e-01
+## BRIEF_C                0.2788495580 0.439404937      7.081044e-01
+## NWRS                   0.6822517586 0.474433857      2.151272e-01
 ##                        storylength_bus implicit_referents_bus mazes_bus
 ## MLU_bus                     1.00000000              1.0000000 0.5766893
 ## complex_bus                 1.00000000              1.0000000 1.0000000
@@ -1486,17 +1436,17 @@ corr.test(data_HI[c(dependent_variables_bus, independent_variables_cognition)])$
 ## BRIEF_B                     0.36563640              0.7157029 0.3665273
 ## BRIEF_C                     0.90116092              0.1717547 0.8439626
 ## NWRS                        0.22550554              0.7589738 0.5814777
-##                          plot_bus    BRIEF_B   BRIEF_C NWRS
-## MLU_bus                0.15722651 1.00000000 1.0000000    1
-## complex_bus            0.05538156 1.00000000 1.0000000    1
-## ungrammatical_bus      1.00000000 1.00000000 1.0000000    1
-## storylength_bus        0.87709826 1.00000000 1.0000000    1
-## implicit_referents_bus 1.00000000 1.00000000 1.0000000    1
-## mazes_bus              1.00000000 1.00000000 1.0000000    1
-## plot_bus               0.00000000 1.00000000 1.0000000    1
-## BRIEF_B                0.40847466 0.00000000 0.9263408    1
-## BRIEF_C                0.11509656 0.02315852 0.0000000    1
-## NWRS                   0.29320549 0.86603575 0.7782455    0</code></pre>
+##                             plot_bus      BRIEF_B      BRIEF_C NWRS
+## MLU_bus                 1.572265e-01 1.000000e+00 1.000000e+00    1
+## complex_bus             5.538156e-02 1.000000e+00 1.000000e+00    1
+## ungrammatical_bus       1.000000e+00 1.000000e+00 1.000000e+00    1
+## storylength_bus         8.770983e-01 1.000000e+00 1.000000e+00    1
+## implicit_referents_bus  1.000000e+00 1.000000e+00 1.000000e+00    1
+## mazes_bus               1.000000e+00 1.000000e+00 1.000000e+00    1
+## plot_bus               1.245968e-139 1.000000e+00 1.000000e+00    1
+## BRIEF_B                 4.084747e-01 4.250614e-78 9.263408e-01    1
+## BRIEF_C                 1.150966e-01 2.315852e-02 1.328317e-79    1
+## NWRS                    2.932055e-01 8.660358e-01 7.782455e-01    0</code></pre>
 </div>
 <div id="correlations-of-the-variables-for-the-bus-story-for-the-td-children" class="section level2">
 <h2>Correlations of the variables for The Bus Story for the
@@ -1512,7 +1462,7 @@ TD-children</h2>
 <p>Dependent variable (macrostructures): <code>plot_bus</code></p>
 <p>Independent variables: <code>BRIEF_B</code>, <code>BRIEF_C</code>,
 <code>NWRS</code></p>
-<pre class="r"><code>make_corrplot(data_TD[c(dependent_variables_bus, independent_variables_cognition)], &quot;The Bus Story, NWRS &amp; BRIEF (TD)&quot;, cex=0.7, ncex=0.7)
+<pre class="r"><code>make_corrplot(data_TD[c(dependent_variables_bus, independent_variables_cognition)], &quot;The Bus Story, NWR-S &amp; BRIEF (TD)&quot;, cex=0.7, ncex=0.7)
 corr.test(data_TD[c(dependent_variables_bus, independent_variables_cognition)])$p</code></pre>
 <pre><code>##                            MLU_bus complex_bus ungrammatical_bus
 ## MLU_bus                0.000000000  0.92559728       1.000000000
@@ -1526,27 +1476,27 @@ corr.test(data_TD[c(dependent_variables_bus, independent_variables_cognition)])$
 ## BRIEF_C                0.856146508  0.35393782       0.324223396
 ## NWRS                   0.076000830  0.12050602       0.016398040
 ##                        storylength_bus implicit_referents_bus mazes_bus
-## MLU_bus                     1.00000000            1.000000000 1.0000000
-## complex_bus                 1.00000000            1.000000000 1.0000000
-## ungrammatical_bus           1.00000000            1.000000000 1.0000000
-## storylength_bus             0.00000000            1.000000000 1.0000000
-## implicit_referents_bus      0.97317731            0.000000000 1.0000000
-## mazes_bus                   0.72489889            0.228080690 0.0000000
-## plot_bus                    0.01802242            0.001118311 0.4775882
-## BRIEF_B                     0.68751558            0.991316590 0.7694786
-## BRIEF_C                     0.73493661            0.471285298 0.9060187
-## NWRS                        0.44883835            0.045549605 0.7026119
-##                           plot_bus      BRIEF_B    BRIEF_C      NWRS
-## MLU_bus                0.129713032 1.0000000000 1.00000000 1.0000000
-## complex_bus            1.000000000 1.0000000000 1.00000000 1.0000000
-## ungrammatical_bus      0.303350799 1.0000000000 1.00000000 0.6559216
-## storylength_bus        0.702874286 1.0000000000 1.00000000 1.0000000
-## implicit_referents_bus 0.049205700 1.0000000000 1.00000000 1.0000000
-## mazes_bus              1.000000000 1.0000000000 1.00000000 1.0000000
-## plot_bus               0.000000000 1.0000000000 1.00000000 0.3921164
-## BRIEF_B                0.340061189 0.0000000000 0.03206273 1.0000000
-## BRIEF_C                0.054114866 0.0007125051 0.00000000 1.0000000
-## NWRS                   0.009563816 0.7903873785 0.50124610 0.0000000</code></pre>
+## MLU_bus                   1.000000e+00            1.000000000 1.0000000
+## complex_bus               1.000000e+00            1.000000000 1.0000000
+## ungrammatical_bus         1.000000e+00            1.000000000 1.0000000
+## storylength_bus          2.433532e-142            1.000000000 1.0000000
+## implicit_referents_bus    9.731773e-01            0.000000000 1.0000000
+## mazes_bus                 7.248989e-01            0.228080690 0.0000000
+## plot_bus                  1.802242e-02            0.001118311 0.4775882
+## BRIEF_B                   6.875156e-01            0.991316590 0.7694786
+## BRIEF_C                   7.349366e-01            0.471285298 0.9060187
+## NWRS                      4.488384e-01            0.045549605 0.7026119
+##                           plot_bus       BRIEF_B    BRIEF_C      NWRS
+## MLU_bus                0.129713032  1.000000e+00 1.00000000 1.0000000
+## complex_bus            1.000000000  1.000000e+00 1.00000000 1.0000000
+## ungrammatical_bus      0.303350799  1.000000e+00 1.00000000 0.6559216
+## storylength_bus        0.702874286  1.000000e+00 1.00000000 1.0000000
+## implicit_referents_bus 0.049205700  1.000000e+00 1.00000000 1.0000000
+## mazes_bus              1.000000000  1.000000e+00 1.00000000 1.0000000
+## plot_bus               0.000000000  1.000000e+00 1.00000000 0.3921164
+## BRIEF_B                0.340061189 1.245968e-139 0.03206273 1.0000000
+## BRIEF_C                0.054114866  7.125051e-04 0.00000000 1.0000000
+## NWRS                   0.009563816  7.903874e-01 0.50124610 0.0000000</code></pre>
 </div>
 </div>
 <div id="correlations-between-rehabilitation-and-narrative-abilities-in-hi-children" class="section level1">
@@ -1571,17 +1521,17 @@ the HI-children</h2>
 
 make_corrplot(data_HI[c(dependent_variables_frog, independent_variables_rehabilitation)], &quot;The Frog Story, Hearing Loss, Age at the start of Rehabilitation &amp; Speech Understanding&quot;)
 corr.test(data_HI[c(dependent_variables_frog, independent_variables_rehabilitation)])$p</code></pre>
-<pre><code>##                               MLU_frog complex_frog ungrammatical_frog
-## MLU_frog                   0.000000000    0.1576562          0.2237898
-## complex_frog               0.003503471    0.0000000          1.0000000
-## ungrammatical_frog         0.005086132    0.2741238          0.0000000
-## storylength_frog           0.069826171    0.2275517          0.7766348
-## implicit_referents_frog    0.325621126    0.1552501          0.8547486
-## mazes_frog                 0.562280840    0.8705955          0.8458646
-## plot_frog                  0.014381342    0.3262223          0.2667844
-## hearing_loss_best_ear      0.266309491    0.9939420          0.7795741
-## age_rehabilitation         0.873530303    0.2039840          0.9943715
-## speech_understanding_total 0.802309755    0.3840339          0.2024575
+<pre><code>##                               MLU_frog  complex_frog ungrammatical_frog
+## MLU_frog                   0.000000000  1.576562e-01          0.2237898
+## complex_frog               0.003503471 1.679092e-134          1.0000000
+## ungrammatical_frog         0.005086132  2.741238e-01          0.0000000
+## storylength_frog           0.069826171  2.275517e-01          0.7766348
+## implicit_referents_frog    0.325621126  1.552501e-01          0.8547486
+## mazes_frog                 0.562280840  8.705955e-01          0.8458646
+## plot_frog                  0.014381342  3.262223e-01          0.2667844
+## hearing_loss_best_ear      0.266309491  9.939420e-01          0.7795741
+## age_rehabilitation         0.873530303  2.039840e-01          0.9943715
+## speech_understanding_total 0.802309755  3.840339e-01          0.2024575
 ##                            storylength_frog implicit_referents_frog mazes_frog
 ## MLU_frog                         1.00000000               1.0000000 1.00000000
 ## complex_frog                     1.00000000               1.0000000 1.00000000
@@ -1594,16 +1544,16 @@ corr.test(data_HI[c(dependent_variables_frog, independent_variables_rehabilitati
 ## age_rehabilitation               0.93439806               0.5260251 0.03400854
 ## speech_understanding_total       0.27964298               0.9479592 0.12938106
 ##                            plot_frog hearing_loss_best_ear age_rehabilitation
-## MLU_frog                   0.6183977             1.0000000          1.0000000
-## complex_frog               1.0000000             1.0000000          1.0000000
-## ungrammatical_frog         1.0000000             1.0000000          1.0000000
-## storylength_frog           1.0000000             1.0000000          1.0000000
-## implicit_referents_frog    1.0000000             1.0000000          1.0000000
-## mazes_frog                 1.0000000             1.0000000          1.0000000
-## plot_frog                  0.0000000             1.0000000          1.0000000
-## hearing_loss_best_ear      0.1333773             0.0000000          1.0000000
-## age_rehabilitation         0.1609030             0.0479668          0.0000000
-## speech_understanding_total 0.4552214             0.2865306          0.1830225
+## MLU_frog                   0.6183977          1.000000e+00          1.0000000
+## complex_frog               1.0000000          1.000000e+00          1.0000000
+## ungrammatical_frog         1.0000000          1.000000e+00          1.0000000
+## storylength_frog           1.0000000          1.000000e+00          1.0000000
+## implicit_referents_frog    1.0000000          1.000000e+00          1.0000000
+## mazes_frog                 1.0000000          1.000000e+00          1.0000000
+## plot_frog                  0.0000000          1.000000e+00          1.0000000
+## hearing_loss_best_ear      0.1333773         2.433532e-142          1.0000000
+## age_rehabilitation         0.1609030          4.796680e-02          0.0000000
+## speech_understanding_total 0.4552214          2.865306e-01          0.1830225
 ##                            speech_understanding_total
 ## MLU_frog                                            1
 ## complex_frog                                        1
@@ -1634,16 +1584,16 @@ the HI-children</h2>
 <pre class="r"><code>make_corrplot(data_HI[c(dependent_variables_bus, independent_variables_rehabilitation)], &quot;The Bus Story, Hearing Loss, Age at the start of Rehabilitation &amp; Speech Understanding&quot;)
 corr.test(data_HI[c(dependent_variables_bus, independent_variables_rehabilitation)])$p</code></pre>
 <pre><code>##                                 MLU_bus complex_bus ungrammatical_bus
-## MLU_bus                    0.0000000000 0.028043557        1.00000000
-## complex_bus                0.0006231902 0.000000000        1.00000000
-## ungrammatical_bus          0.1020496892 0.034922303        0.00000000
-## storylength_bus            0.9015960976 0.353696523        0.25827979
-## implicit_referents_bus     0.4606351302 0.562095768        0.06437249
-## mazes_bus                  0.0137306976 0.386845196        0.56067819
-## plot_bus                   0.0036564305 0.001258672        0.13879202
-## hearing_loss_best_ear      0.6291738786 0.498787643        0.65009195
-## age_rehabilitation         0.2131445383 0.392653316        0.96314664
-## speech_understanding_total 0.5687601745 0.518449745        0.97971027
+## MLU_bus                    0.0000000000 0.028043557      1.000000e+00
+## complex_bus                0.0006231902 0.000000000      1.000000e+00
+## ungrammatical_bus          0.1020496892 0.034922303     1.245968e-139
+## storylength_bus            0.9015960976 0.353696523      2.582798e-01
+## implicit_referents_bus     0.4606351302 0.562095768      6.437249e-02
+## mazes_bus                  0.0137306976 0.386845196      5.606782e-01
+## plot_bus                   0.0036564305 0.001258672      1.387920e-01
+## hearing_loss_best_ear      0.6291738786 0.498787643      6.500920e-01
+## age_rehabilitation         0.2131445383 0.392653316      9.631466e-01
+## speech_understanding_total 0.5687601745 0.518449745      9.797103e-01
 ##                            storylength_bus implicit_referents_bus mazes_bus
 ## MLU_bus                         1.00000000             1.00000000 0.5766893
 ## complex_bus                     1.00000000             1.00000000 1.0000000
@@ -1655,28 +1605,28 @@ corr.test(data_HI[c(dependent_variables_bus, independent_variables_rehabilitatio
 ## hearing_loss_best_ear           0.52864915             0.43210151 0.7081872
 ## age_rehabilitation              0.73788646             0.39627302 0.9698697
 ## speech_understanding_total      0.05174248             0.03172264 0.2543885
-##                              plot_bus hearing_loss_best_ear age_rehabilitation
-## MLU_bus                    0.15722651             1.0000000          1.0000000
-## complex_bus                0.05538156             1.0000000          1.0000000
-## ungrammatical_bus          1.00000000             1.0000000          1.0000000
-## storylength_bus            0.87709826             1.0000000          1.0000000
-## implicit_referents_bus     1.00000000             1.0000000          1.0000000
-## mazes_bus                  1.00000000             1.0000000          1.0000000
-## plot_bus                   0.00000000             1.0000000          1.0000000
-## hearing_loss_best_ear      0.27809158             0.0000000          1.0000000
-## age_rehabilitation         0.86882739             0.0479668          0.0000000
-## speech_understanding_total 0.30650133             0.2865306          0.1830225
-##                            speech_understanding_total
-## MLU_bus                                             1
-## complex_bus                                         1
-## ungrammatical_bus                                   1
-## storylength_bus                                     1
-## implicit_referents_bus                              1
-## mazes_bus                                           1
-## plot_bus                                            1
-## hearing_loss_best_ear                               1
-## age_rehabilitation                                  1
-## speech_understanding_total                          0</code></pre>
+##                                 plot_bus hearing_loss_best_ear
+## MLU_bus                     1.572265e-01          1.000000e+00
+## complex_bus                 5.538156e-02          1.000000e+00
+## ungrammatical_bus           1.000000e+00          1.000000e+00
+## storylength_bus             8.770983e-01          1.000000e+00
+## implicit_referents_bus      1.000000e+00          1.000000e+00
+## mazes_bus                   1.000000e+00          1.000000e+00
+## plot_bus                   1.245968e-139          1.000000e+00
+## hearing_loss_best_ear       2.780916e-01         2.433532e-142
+## age_rehabilitation          8.688274e-01          4.796680e-02
+## speech_understanding_total  3.065013e-01          2.865306e-01
+##                            age_rehabilitation speech_understanding_total
+## MLU_bus                             1.0000000                          1
+## complex_bus                         1.0000000                          1
+## ungrammatical_bus                   1.0000000                          1
+## storylength_bus                     1.0000000                          1
+## implicit_referents_bus              1.0000000                          1
+## mazes_bus                           1.0000000                          1
+## plot_bus                            1.0000000                          1
+## hearing_loss_best_ear               1.0000000                          1
+## age_rehabilitation                  0.0000000                          1
+## speech_understanding_total          0.1830225                          0</code></pre>
 </div>
 </div>
 

@@ -76,7 +76,6 @@ numeric_variables <- c(
   "age_rehabilitation"
 )
 
-binary_variables <- c("HI", "gender", "born", "perceptive")
 describe(data)[numeric_variables, descriprive_columns]
 
 numeric_variables_HI <- c(
@@ -141,30 +140,7 @@ contrast <- cbind (c(0.5, -0.5))   # HI = -0.5, TD = +0.5
 colnames (contrast) <- c("-HI+TD")
 contrasts (data$HI) <- contrast
 contrasts (data$HI)
-
-# Binary variable `gender`
-data$gender <- as.factor(data$gender)
-contrast <- cbind (c(-0.5, +0.5))   # f = -0.5, m = +0.5
-colnames (contrast) <- c("-f+m")
-contrasts (data$gender) <- contrast
-contrasts (data$gender)
-
-# Binary variable `born`
-data$born <- as.factor(data$born)
-contrast <- cbind (c(+0.5, -0.5))   # born = -0.5, not_born = +0.5
-colnames (contrast) <- c("-born+not_born")
-contrasts (data$born) <- contrast
-contrasts (data$born)
-
-# Variable perceptive can take three values
-data$perceptive <- as.factor(data$perceptive)
-contrasts <- cbind (c(-1/3, +2/3, -1/3), c(-0.5, 0, +0.5))   # alphabetical order: conductive, conductive_perceptive, perceptive
-colnames (contrasts) <- c("-conductiveperceptive+conductive_perceptive", "-conductive+perceptive")
-contrasts (data$perceptive) <- contrasts
-contrasts(data$perceptive)
 ```
-
-
 
 ## Transforming the data to prepare for the models
 
@@ -219,105 +195,18 @@ data[numeric_variables] <- scale(data[numeric_variables], scale=FALSE)
 ```
 
 
-## Plotting the correlation matrices
+## Checking correlations for the morphosyntactic and semantic-pragmatic structures
 
-A helper function is used to plot the correlation matrices in a directory.
-
-```{r}
-new_colname <- function(column_name) {
-  title <- column_name
-
-  names_plot <- read.csv(file="./descriptive_colnames.csv")
-  title <- names_plot[names_plot["old"] == column_name]
-
-  if (length(title > 0 )) {  # Update the title if a rename exists
-    title <- title[[2]]
-  }
-
-  return(title)
-}
-
-make_corrplot <- function(all_data, file_name, path_name="corrplots", cex=0.7, ncex=0.7) {
-  dir.create(path_name, showWarnings = FALSE)
-  file_path <- paste("./", path_name,"/", file_name, ".png", sep="")
-  
-  colnames(all_data) <- unlist(lapply(colnames(all_data), new_colname))
-
-  png(height=1800, width=1800, file=file_path)
-  corr_matrix <- corr.test(all_data)
-  fctr <- 4
-  
-  corrplot(
-      corr_matrix$r, title=paste("The Correlation Matrix For", file_name), p.mat = t(corr_matrix$p), insig="blank",
-      cex.main=fctr,
-      bg="gray92",
-      tl.cex=fctr*cex,
-      cl.cex=fctr*0.8,
-      type="upper",
-      diag = FALSE,
-      method="color",
-      addgrid.col = "darkgray",
-      number.cex = fctr*ncex,
-      mar = c(fctr*2, fctr*2, fctr*3, fctr*2), # margins
-      tl.col="black",
-      tl.offset=fctr*0.4
-    )$corrPos -> corr_positions
-  text(corr_positions$x, corr_positions$y, round(corr_positions$corr, 2), cex=fctr*ncex)
-  
-  # Surpress the output of the dev.of
-  sink("tmp.log")
-  dev.off()
-  sink()
-  file_removed <- file.remove("tmp.log")
-}
-
-numeric_variables_both = c(
-  "age",
-  "BRIEF_B",
-  "BRIEF_C",
-  "NWRS",
-  "hearing_loss_L", 
-  "hearing_loss_R",
-  "speech_understanding_L", 
-  "speech_understanding_R", 
-  "speech_understanding_total",
-  "age_rehabilitation"
-)
-
-numeric_variables_for_cor_bus <- c(
-  "storylength_bus", 
-  "MLU_bus", 
-  "mazes_bus", 
-  "ungrammatical_bus", 
-  "complex_bus", 
-  "implicit_referents_bus",
-  "plot_bus",
-  
-  numeric_variables_both
-)
-
-numeric_variables_for_cor_frog <- c(
-  "storylength_frog", 
-  "MLU_frog", 
-  "mazes_frog", 
-  "ungrammatical_frog", 
-  "complex_frog", 
-  "implicit_referents_frog",
-  "plot_frog",
-  
-  numeric_variables_both
-)
-
-make_corrplot(data[,numeric_variables_for_cor_bus], "correlation_matrix_bus", cex=0.6, ncex=0.4)
-make_corrplot(data[,numeric_variables_for_cor_frog], "correlation_matrix_frog", cex=0.6, ncex=0.4)
-```
-
-The p-values for the correlations are shown as well.
+The correlations including their *p*-values are shown.
 
 ```{r}
+corr.test(data[c("MLU_bus",  "complex_bus", "ungrammatical_bus")])$r
 corr.test(data[c("MLU_bus",  "complex_bus", "ungrammatical_bus")])$p
+corr.test(data[c("implicit_referents_bus", "storylength_bus")])$r
 corr.test(data[c("implicit_referents_bus", "storylength_bus")])$p
+corr.test(data[c("MLU_frog",  "complex_frog", "ungrammatical_frog")])$r
 corr.test(data[c("MLU_frog",  "complex_frog", "ungrammatical_frog")])$p
+corr.test(data[c("implicit_referents_frog", "storylength_frog")])$r
 corr.test(data[c("implicit_referents_frog", "storylength_frog")])$p
 ```
 
@@ -424,7 +313,7 @@ confint(model_plot_bus, level = 0.95)
 
 # Correlations between phonological processing, executive functions and narrative abilities
 
-Here, the correlations of several variables regarding phonological processing,
+The correlations of several variables regarding phonological processing,
 executive functions and narrative abilities are computed.
 
 ## The effect of HI on the BRIEF and the NWR-S
@@ -443,7 +332,60 @@ summary(model_NWRS)
 confint(model_NWRS, level = 0.95)
 ```
 
+
 ## Correlations of the variables for The Frog Story for the all children
+
+A helper function is used to plot the correlation matrices in a directory.
+
+```{r}
+new_colname <- function(column_name) {
+  title <- column_name
+
+  names_plot <- read.csv(file="./descriptive_colnames.csv")
+  title <- names_plot[names_plot["old"] == column_name]
+
+  if (length(title > 0 )) {  # Update the title if a rename exists
+    title <- title[[2]]
+  }
+
+  return(title)
+}
+
+make_corrplot <- function(all_data, file_name, path_name="corrplots", cex=0.7, ncex=0.7) {
+  dir.create(path_name, showWarnings = FALSE)
+  file_path <- paste("./", path_name,"/", file_name, ".png", sep="")
+  
+  colnames(all_data) <- unlist(lapply(colnames(all_data), new_colname))
+
+  png(height=1800, width=1800, file=file_path)
+  corr_matrix <- corr.test(all_data)
+  fctr <- 4
+  
+  corrplot(
+      corr_matrix$r, title=paste("The Correlation Matrix For", file_name), p.mat = t(corr_matrix$p), insig="blank",
+      cex.main=fctr,
+      bg="gray92",
+      tl.cex=fctr*cex,
+      cl.cex=fctr*0.8,
+      type="upper",
+      diag = FALSE,
+      method="color",
+      addgrid.col = "darkgray",
+      number.cex = fctr*ncex,
+      mar = c(fctr*2, fctr*2, fctr*3, fctr*2), # margins
+      tl.col="black",
+      tl.offset=fctr*0.4
+    )$corrPos -> corr_positions
+  text(corr_positions$x, corr_positions$y, round(corr_positions$corr, 2), cex=fctr*ncex)
+  
+  # Surpress the output of the dev.of
+  sink("tmp.log")
+  dev.off()
+  sink()
+  file_removed <- file.remove("tmp.log")
+}
+```
+
 Dependent variables (microstructures):
 
 - Morphosyntax: `MLU_frog`, `ungrammatical_frog`, `complex_frog`
@@ -467,7 +409,7 @@ dependent_variables_frog <- c(
 
 independent_variables_cognition <- c("BRIEF_B", "BRIEF_C", "NWRS")
 
-make_corrplot(data[c(dependent_variables_frog, independent_variables_cognition)], "The Frog Story, NWRS & BRIEF (total)")
+make_corrplot(data[c(dependent_variables_frog, independent_variables_cognition)], "The Frog Story, NWR-S & BRIEF (total)")
 corr.test(data[c(dependent_variables_frog, independent_variables_cognition)])$p
 ```
 
@@ -483,7 +425,7 @@ Dependent variable (macrostructures): `plot_frog`
 Independent variables: `BRIEF_B`, `BRIEF_C`, `NWRS`
 
 ```{r}
-make_corrplot(data_HI[c(dependent_variables_frog, independent_variables_cognition)], "The Frog Story, NWRS & BRIEF (HI)", cex=0.7, ncex=0.7)
+make_corrplot(data_HI[c(dependent_variables_frog, independent_variables_cognition)], "The Frog Story, NWR-S & BRIEF (HI)", cex=0.7, ncex=0.7)
 corr.test(data_HI[c(dependent_variables_frog, independent_variables_cognition)])$p
 ```
 
@@ -500,7 +442,7 @@ Dependent variable (macrostructures): `plot_frog`
 Independent variables: `BRIEF_B`, `BRIEF_C`, `NWRS`
 
 ```{r}
-make_corrplot(data_TD[c(dependent_variables_frog, independent_variables_cognition)], "The Frog Story, NWRS & BRIEF (TD)")
+make_corrplot(data_TD[c(dependent_variables_frog, independent_variables_cognition)], "The Frog Story, NWR-S & BRIEF (TD)")
 corr.test(data_TD[c(dependent_variables_frog, independent_variables_cognition)])$p
 ```
 
@@ -526,7 +468,7 @@ dependent_variables_bus <- c(
   "plot_bus"
 )
 
-make_corrplot(data[c(dependent_variables_bus, independent_variables_cognition)], "The Bus Story, NWRS & BRIEF (total)")
+make_corrplot(data[c(dependent_variables_bus, independent_variables_cognition)], "The Bus Story, NWR-S & BRIEF (total)")
 corr.test(data[c(dependent_variables_bus, independent_variables_cognition)])$p
 ```
 
@@ -542,7 +484,7 @@ Dependent variable (macrostructures): `plot_bus`
 Independent variables: `BRIEF_B`, `BRIEF_C`, `NWRS`
 
 ```{r}
-make_corrplot(data_HI[c(dependent_variables_bus, independent_variables_cognition)], "The Bus Story, NWRS & BRIEF (HI)")
+make_corrplot(data_HI[c(dependent_variables_bus, independent_variables_cognition)], "The Bus Story, NWR-S & BRIEF (HI)")
 corr.test(data_HI[c(dependent_variables_bus, independent_variables_cognition)])$p
 ```
 
@@ -559,7 +501,7 @@ Dependent variable (macrostructures): `plot_bus`
 Independent variables: `BRIEF_B`, `BRIEF_C`, `NWRS`
 
 ```{r}
-make_corrplot(data_TD[c(dependent_variables_bus, independent_variables_cognition)], "The Bus Story, NWRS & BRIEF (TD)", cex=0.7, ncex=0.7)
+make_corrplot(data_TD[c(dependent_variables_bus, independent_variables_cognition)], "The Bus Story, NWR-S & BRIEF (TD)", cex=0.7, ncex=0.7)
 corr.test(data_TD[c(dependent_variables_bus, independent_variables_cognition)])$p
 ```
 
