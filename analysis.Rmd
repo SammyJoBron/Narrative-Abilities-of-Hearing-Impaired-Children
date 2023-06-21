@@ -316,23 +316,6 @@ confint(model_plot_bus, level = 0.95)
 The correlations of several variables regarding phonological processing,
 executive functions and narrative abilities are computed.
 
-## The effect of HI on the BRIEF and the NWR-S
-
-```{r}
-model_BRIEF_B <- lm(BRIEF_B ~., data = data[,c("BRIEF_B", "HI")])
-summary(model_BRIEF_B)
-confint(model_BRIEF_B, level = 0.95)
-
-model_BRIEF_C <- lm(BRIEF_C ~., data = data[,c("BRIEF_C", "HI")])
-summary(model_BRIEF_C)
-confint(model_BRIEF_C, level = 0.95)
-
-model_NWRS <- lm(NWRS ~., data = data[,c("NWRS", "HI")])
-summary(model_NWRS)
-confint(model_NWRS, level = 0.95)
-```
-
-
 ## Correlations of the variables for The Frog Story for the all children
 
 A helper function is used to plot the correlation matrices in a directory.
