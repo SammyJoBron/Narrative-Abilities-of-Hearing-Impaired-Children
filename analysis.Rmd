@@ -522,7 +522,8 @@ Independent variables: `hearing_loss_best_ear`, `age_rehabilitation`, `speech_un
 ```{r}
 independent_variables_rehabilitation <- c("hearing_loss_best_ear", "age_rehabilitation", "speech_understanding_total")
 
-make_corrplot(data_HI[c(dependent_variables_frog, independent_variables_rehabilitation)], "The Frog Story, Hearing Loss, Age at the start of Rehabilitation & Speech Understanding")
+make_corrplot(data_HI[c(dependent_variables_frog, independent_variables_rehabilitation)], "The Frog Story, Hearing Loss, 
+              Age at the start of Rehabilitation & Speech Understanding")
 corr.test(data_HI[c(dependent_variables_frog, independent_variables_rehabilitation)])$p
 ```
 
@@ -539,6 +540,7 @@ Dependent variable (macrostructures): `plot_bus`
 Independent variables: `hearing_loss_best_ear`, `age_rehabilitation`, `speech_understanding_total`
 
 ```{r}
-make_corrplot(data_HI[c(dependent_variables_bus, independent_variables_rehabilitation)], "The Bus Story, Hearing Loss, Age at the start of Rehabilitation & Speech Understanding")
+make_corrplot(data_HI[c(dependent_variables_bus, independent_variables_rehabilitation)], "The Bus Story, Hearing Loss, 
+              Age at the start of Rehabilitation & Speech Understanding")
 corr.test(data_HI[c(dependent_variables_bus, independent_variables_rehabilitation)])$p
 ```

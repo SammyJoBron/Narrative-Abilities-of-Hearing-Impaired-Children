@@ -1519,7 +1519,8 @@ the HI-children</h2>
 <code>speech_understanding_total</code></p>
 <pre class="r"><code>independent_variables_rehabilitation &lt;- c(&quot;hearing_loss_best_ear&quot;, &quot;age_rehabilitation&quot;, &quot;speech_understanding_total&quot;)
 
-make_corrplot(data_HI[c(dependent_variables_frog, independent_variables_rehabilitation)], &quot;The Frog Story, Hearing Loss, Age at the start of Rehabilitation &amp; Speech Understanding&quot;)
+make_corrplot(data_HI[c(dependent_variables_frog, independent_variables_rehabilitation)], &quot;The Frog Story, Hearing Loss, 
+              Age at the start of Rehabilitation &amp; Speech Understanding&quot;)
 corr.test(data_HI[c(dependent_variables_frog, independent_variables_rehabilitation)])$p</code></pre>
 <pre><code>##                               MLU_frog  complex_frog ungrammatical_frog
 ## MLU_frog                   0.000000000  1.576562e-01          0.2237898
@@ -1581,7 +1582,8 @@ the HI-children</h2>
 <p>Independent variables: <code>hearing_loss_best_ear</code>,
 <code>age_rehabilitation</code>,
 <code>speech_understanding_total</code></p>
-<pre class="r"><code>make_corrplot(data_HI[c(dependent_variables_bus, independent_variables_rehabilitation)], &quot;The Bus Story, Hearing Loss, Age at the start of Rehabilitation &amp; Speech Understanding&quot;)
+<pre class="r"><code>make_corrplot(data_HI[c(dependent_variables_bus, independent_variables_rehabilitation)], &quot;The Bus Story, Hearing Loss, 
+              Age at the start of Rehabilitation &amp; Speech Understanding&quot;)
 corr.test(data_HI[c(dependent_variables_bus, independent_variables_rehabilitation)])$p</code></pre>
 <pre><code>##                                 MLU_bus complex_bus ungrammatical_bus
 ## MLU_bus                    0.0000000000 0.028043557      1.000000e+00
